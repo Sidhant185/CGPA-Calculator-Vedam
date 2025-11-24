@@ -1,295 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vedam CGPA Calculator</title>
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Vedam Merit Score & CGPA Calculator</h1>
-            <p class="subtitle">Calculate your Vedam Merit Score and ADYPU CGPA</p>
-        </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vedam Merit Score & CGPA Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="toast-container" id="toastContainer"></div>
 
-        <div class="main-content">
-            <div class="left-panel">
-                <div class="controls">
-                    <button id="exportBtn" class="btn btn-secondary">Export Data</button>
-                    <button id="importBtn" class="btn btn-secondary">Import Data</button>
-                    <button id="resetBtn" class="btn btn-danger">Reset All Data</button>
-                    <input type="file" id="importFile" accept=".json" style="display: none;">
-                </div>
-
-                <div class="subjects-container">
-                    <!-- Mathematics Section -->
-                    <div class="subject-section" id="maths-section">
-                        <h2>Mathematics for AI - I (E0005A)</h2>
-                        <div class="section-content">
-                            <div class="vedam-section">
-                                <h3>Vedam Merit Score</h3>
-                                <div id="maths-contests"></div>
-                                <button class="btn btn-small" onclick="addContest('maths')">+ Add Contest</button>
-                                <div class="form-group">
-                                    <label>Mock Interview (out of 60):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="maths-mock" min="0" max="60" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="maths-mock-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Vedam Score: <span id="maths-vedam-total">-</span> / 100</strong>
-                                </div>
-                            </div>
-                            <div class="adypu-section">
-                                <h3>ADYPU Marks</h3>
-                                <div class="form-group">
-                                    <label>UT (out of 20):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="maths-ut" min="0" max="20" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="maths-ut-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>ET (out of 50):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="maths-et" min="0" max="50" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="maths-et-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>CA (from Vedam):</label>
-                                    <span id="maths-ca">-</span> / 30
-                                </div>
-                                <div class="result-display">
-                                    <strong>Total: <span id="maths-total">-</span> / 100</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Web Section -->
-                    <div class="subject-section" id="web-section">
-                        <h2>System & Web Basics (E00017A)</h2>
-                        <div class="section-content">
-                            <div class="vedam-section">
-                                <h3>Vedam Merit Score</h3>
-                                <div id="web-contests"></div>
-                                <button class="btn btn-small" onclick="addContest('web')">+ Add Contest</button>
-                                <div class="form-group">
-                                    <label>Mock Interview (out of 60):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="web-mock" min="0" max="60" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="web-mock-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Vedam Score: <span id="web-vedam-total">-</span> / 100</strong>
-                                </div>
-                            </div>
-                            <div class="adypu-section">
-                                <h3>ADYPU Marks</h3>
-                                <div class="form-group">
-                                    <label>UT (out of 20):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="web-ut" min="0" max="20" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="web-ut-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>ET (out of 50):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="web-et" min="0" max="50" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="web-et-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Total: <span id="web-total">-</span> / 70</strong>
-                                </div>
-                                <div class="lab-info">
-                                    <strong>Lab (E00017B): <span id="web-lab">-</span> / 50</strong> (from Vedam Score)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Java Section -->
-                    <div class="subject-section" id="java-section">
-                        <h2>Fundamentals of Programming - Java (E0025A)</h2>
-                        <div class="section-content">
-                            <div class="vedam-section">
-                                <h3>Vedam Merit Score</h3>
-                                <div id="java-contests"></div>
-                                <button class="btn btn-small" onclick="addContest('java')">+ Add Contest</button>
-                                <div class="form-group">
-                                    <label>Mock Interview (out of 60):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="java-mock" min="0" max="60" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="java-mock-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Vedam Score: <span id="java-vedam-total">-</span> / 100</strong>
-                                </div>
-                            </div>
-                            <div class="adypu-section">
-                                <h3>ADYPU Marks</h3>
-                                <div class="form-group">
-                                    <label>UT (out of 20):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="java-ut" min="0" max="20" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="java-ut-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>ET (out of 50):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="java-et" min="0" max="50" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="java-et-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Total: <span id="java-total">-</span> / 70</strong>
-                                </div>
-                                <div class="lab-info">
-                                    <strong>Lab (E0025B): <span id="java-lab">-</span> / 50</strong> (from Vedam Score)<br>
-                                    <strong>Workshop (E0033B): <span id="java-workshop">-</span> / 50</strong> (from Vedam Score)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Professional Communication Section -->
-                    <div class="subject-section" id="professional-section">
-                        <h2>Professional Communication (E0028B) + Co-curricular (E0035B)</h2>
-                        <div class="section-content">
-                            <div class="vedam-section">
-                                <h3>Vedam Merit Score</h3>
-                                <div class="form-group">
-                                    <label>LinkedIn Profile (out of 10):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="prof-linkedin" min="0" max="10" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="prof-linkedin-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Assignment (out of 10):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="prof-assignment" min="0" max="10" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="prof-assignment-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>CV + Email (out of 20):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="prof-cv" min="0" max="20" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="prof-cv-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Presentation (out of 40):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="prof-presentation" min="0" max="40" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="prof-presentation-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Attendance (out of 10):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="prof-attendance" min="0" max="10" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="prof-attendance-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Case Study (out of 10):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="prof-casestudy" min="0" max="10" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="prof-casestudy-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Vedam Score: <span id="prof-vedam-total">-</span> / 100</strong>
-                                </div>
-                            </div>
-                            <div class="adypu-section">
-                                <h3>ADYPU Marks</h3>
-                                <div class="lab-info">
-                                    <strong>Professional Communication: <span id="prof-adypu">-</span> / 50</strong> (from Vedam Score)<br>
-                                    <strong>Co-curricular: <span id="prof-cocurricular">-</span> / 50</strong> (from Vedam Score)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Physics Section -->
-                    <div class="subject-section" id="physics-section">
-                        <h2>General Physics (E0018A)</h2>
-                        <div class="section-content">
-                            <div class="adypu-section">
-                                <h3>ADYPU Marks</h3>
-                                <div class="form-group">
-                                    <label>UT (out of 20):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="physics-ut" min="0" max="20" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="physics-ut-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>ET (out of 50):</label>
-                                    <div class="form-row">
-                                        <input type="number" id="physics-et" min="0" max="50" step="0.1" placeholder="Marks" onchange="updateData()">
-                                        <input type="checkbox" id="physics-et-pending" onchange="updateData()"> <label>Pending</label>
-                                    </div>
-                                </div>
-                                <div class="result-display">
-                                    <strong>Total: <span id="physics-total">-</span> / 70</strong>
-                                </div>
-                                <div class="lab-info">
-                                    <strong>Lab (E0018B): <span id="physics-lab">-</span> / 50</strong> (from Professional Communication Vedam Score)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="right-panel">
-                <div class="summary-card">
-                    <h2>Summary</h2>
-                    <div class="summary-item">
-                        <label>Vedam Average Score:</label>
-                        <span id="vedamAverage">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <label>Current CGPA:</label>
-                        <span id="currentCGPA">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <label>Target CGPA:</label>
-                        <input type="number" id="targetCGPA" value="7.5" step="0.1" min="0" max="10" onchange="updateData()">
-                    </div>
-                    <div class="eligibility">
-                        <h3>Eligibility Status</h3>
-                        <div class="status-item">
-                            <span class="status-label">Innovation Lab Access:</span>
-                            <span id="innovationLabStatus" class="status-badge">-</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">Placement Eligibility:</span>
-                            <span id="placementStatus" class="status-badge">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="projection-card">
-                    <h2>ADYPU Grade Points</h2>
-                    <div id="gradePointsContainer"></div>
-                </div>
-            </div>
+    <div class="app-container">
+      <header class="app-header">
+        <div class="header-content">
+          <h1>Vedam Merit Score</h1>
+          <p>Track your academic progress and CGPA goals</p>
         </div>
+        <div class="header-actions">
+          <button id="exportBtn" class="btn btn-outline" title="Export Data">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span>Export</span>
+          </button>
+          <button id="importBtn" class="btn btn-outline" title="Import Data">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span>Import</span>
+          </button>
+          <button
+            id="resetBtn"
+            class="btn btn-danger-outline"
+            title="Reset All"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+            </svg>
+            <span>Reset</span>
+          </button>
+          <input
+            type="file"
+            id="importFile"
+            accept=".json"
+            style="display: none"
+          />
+        </div>
+      </header>
+
+      <main class="main-grid">
+        <div class="subjects-column">
+          <!-- Mathematics Section -->
+          <div class="card subject-card" id="maths-section">
+            <div class="card-header" onclick="toggleCard('maths-content')">
+              <div class="header-title">
+                <h2>Mathematics for AI - I</h2>
+                <span class="course-code">E0005A</span>
+              </div>
+              <div class="header-score">
+                <span class="score-label">Total</span>
+                <span class="score-value" id="maths-total">-</span>
+                <span class="score-max">/ 100</span>
+                <svg
+                  class="chevron"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" id="maths-content">
+              <div class="section-group">
+                <h3 class="group-title">Vedam Merit Score</h3>
+                <div id="maths-contests" class="contests-list"></div>
+                <button
+                  class="btn btn-text btn-add"
+                  onclick="addContest('maths')"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Add Contest
+                </button>
+
+                <div class="input-group">
+                  <div class="input-wrapper">
+                    <label for="maths-mock"
+                      >Mock Interview <span class="max-marks">(60)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="maths-mock"
+                        min="0"
+                        max="60"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="maths-mock-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="sub-result">
+                  <span>Vedam Score:</span>
+                  <strong><span id="maths-vedam-total">-</span> / 100</strong>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="section-group">
+                <h3 class="group-title">ADYPU Marks</h3>
+                <div class="grid-2">
+                  <div class="input-wrapper">
+                    <label for="maths-ut"
+                      >Unit Test <span class="max-marks">(20)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="maths-ut"
+                        min="0"
+                        max="20"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="maths-ut-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="maths-et"
+                      >End Term <span class="max-marks">(50)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="maths-et"
+                        min="0"
+                        max="50"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="maths-et-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="info-row">
+                  <span>CA (from Vedam):</span>
+                  <strong><span id="maths-ca">-</span> / 30</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Web Section -->
+          <div class="card subject-card" id="web-section">
+            <div class="card-header" onclick="toggleCard('web-content')">
+              <div class="header-title">
+                <h2>System & Web Basics</h2>
+                <span class="course-code">E00017A</span>
+              </div>
+              <div class="header-score">
+                <span class="score-label">Total</span>
+                <span class="score-value" id="web-total">-</span>
+                <span class="score-max">/ 70</span>
+                <svg
+                  class="chevron"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" id="web-content">
+              <div class="section-group">
+                <h3 class="group-title">Vedam Merit Score</h3>
+                <div id="web-contests" class="contests-list"></div>
+                <button
+                  class="btn btn-text btn-add"
+                  onclick="addContest('web')"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Add Contest
+                </button>
+
+                <div class="input-group">
+                  <div class="input-wrapper">
+                    <label for="web-mock"
+                      >Mock Interview <span class="max-marks">(60)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="web-mock"
+                        min="0"
+                        max="60"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="web-mock-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="sub-result">
+                  <span>Vedam Score:</span>
+                  <strong><span id="web-vedam-total">-</span> / 100</strong>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="section-group">
+                <h3 class="group-title">ADYPU Marks</h3>
+                <div class="grid-2">
+                  <div class="input-wrapper">
+                    <label for="web-ut"
+                      >Unit Test <span class="max-marks">(20)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="web-ut"
+                        min="0"
+                        max="20"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="web-ut-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="web-et"
+                      >End Term <span class="max-marks">(50)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="web-et"
+                        min="0"
+                        max="50"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="web-et-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="info-box">
+                  <div class="info-item">
+                    <span>Lab (E00017B):</span>
+                    <strong><span id="web-lab">-</span> / 50</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Java Section -->
+          <div class="card subject-card" id="java-section">
+            <div class="card-header" onclick="toggleCard('java-content')">
+              <div class="header-title">
+                <h2>Fundamentals of Programming - Java</h2>
+                <span class="course-code">E0025A</span>
+              </div>
+              <div class="header-score">
+                <span class="score-label">Total</span>
+                <span class="score-value" id="java-total">-</span>
+                <span class="score-max">/ 70</span>
+                <svg
+                  class="chevron"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" id="java-content">
+              <div class="section-group">
+                <h3 class="group-title">Vedam Merit Score</h3>
+                <div id="java-contests" class="contests-list"></div>
+                <button
+                  class="btn btn-text btn-add"
+                  onclick="addContest('java')"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Add Contest
+                </button>
+
+                <div class="input-group">
+                  <div class="input-wrapper">
+                    <label for="java-mock"
+                      >Mock Interview <span class="max-marks">(60)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="java-mock"
+                        min="0"
+                        max="60"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="java-mock-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="sub-result">
+                  <span>Vedam Score:</span>
+                  <strong><span id="java-vedam-total">-</span> / 100</strong>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="section-group">
+                <h3 class="group-title">ADYPU Marks</h3>
+                <div class="grid-2">
+                  <div class="input-wrapper">
+                    <label for="java-ut"
+                      >Unit Test <span class="max-marks">(20)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="java-ut"
+                        min="0"
+                        max="20"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="java-ut-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="java-et"
+                      >End Term <span class="max-marks">(50)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="java-et"
+                        min="0"
+                        max="50"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="java-et-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="info-box">
+                  <div class="info-item">
+                    <span>Lab (E0025B):</span>
+                    <strong><span id="java-lab">-</span> / 50</strong>
+                  </div>
+                  <div class="info-item">
+                    <span>Workshop (E0033B):</span>
+                    <strong><span id="java-workshop">-</span> / 50</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Communication Section -->
+          <div class="card subject-card" id="professional-section">
+            <div class="card-header" onclick="toggleCard('prof-content')">
+              <div class="header-title">
+                <h2>Professional Communication</h2>
+                <span class="course-code">E0028B</span>
+              </div>
+              <div class="header-score">
+                <span class="score-label">Vedam</span>
+                <span class="score-value" id="prof-vedam-total">-</span>
+                <span class="score-max">/ 100</span>
+                <svg
+                  class="chevron"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" id="prof-content">
+              <div class="section-group">
+                <h3 class="group-title">Components</h3>
+                <div class="grid-2">
+                  <div class="input-wrapper">
+                    <label for="prof-linkedin"
+                      >LinkedIn Profile
+                      <span class="max-marks">(10)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="prof-linkedin"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="prof-linkedin-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="prof-assignment"
+                      >Assignment <span class="max-marks">(10)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="prof-assignment"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="prof-assignment-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="prof-cv"
+                      >CV + Email <span class="max-marks">(20)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="prof-cv"
+                        min="0"
+                        max="20"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="prof-cv-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="prof-presentation"
+                      >Presentation <span class="max-marks">(40)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="prof-presentation"
+                        min="0"
+                        max="40"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="prof-presentation-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="prof-attendance"
+                      >Attendance <span class="max-marks">(10)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="prof-attendance"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="prof-attendance-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="prof-casestudy"
+                      >Case Study <span class="max-marks">(10)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="prof-casestudy"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="prof-casestudy-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="info-box">
+                  <div class="info-item">
+                    <span>Professional Communication:</span>
+                    <strong><span id="prof-adypu">-</span> / 50</strong>
+                  </div>
+                  <div class="info-item">
+                    <span>Co-curricular (E0035B):</span>
+                    <strong><span id="prof-cocurricular">-</span> / 50</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Physics Section -->
+          <div class="card subject-card" id="physics-section">
+            <div class="card-header" onclick="toggleCard('physics-content')">
+              <div class="header-title">
+                <h2>General Physics</h2>
+                <span class="course-code">E0018A</span>
+              </div>
+              <div class="header-score">
+                <span class="score-label">Total</span>
+                <span class="score-value" id="physics-total">-</span>
+                <span class="score-max">/ 70</span>
+                <svg
+                  class="chevron"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" id="physics-content">
+              <div class="section-group">
+                <h3 class="group-title">ADYPU Marks</h3>
+                <div class="grid-2">
+                  <div class="input-wrapper">
+                    <label for="physics-ut"
+                      >Unit Test <span class="max-marks">(20)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="physics-ut"
+                        min="0"
+                        max="20"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="physics-ut-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="input-wrapper">
+                    <label for="physics-et"
+                      >End Term <span class="max-marks">(50)</span></label
+                    >
+                    <div class="input-row">
+                      <input
+                        type="number"
+                        id="physics-et"
+                        min="0"
+                        max="50"
+                        step="0.1"
+                        placeholder="0"
+                        onchange="updateData()"
+                      />
+                      <label class="checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id="physics-et-pending"
+                          onchange="updateData()"
+                        />
+                        <span class="checkmark"></span>
+                        <span class="label-text">Pending</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="info-box">
+                  <div class="info-item">
+                    <span>Lab (E0018B):</span>
+                    <strong><span id="physics-lab">-</span> / 50</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="summary-column">
+          <div class="card summary-card sticky-card">
+            <div class="card-header">
+              <h2>Summary</h2>
+            </div>
+            <div class="card-content">
+              <div class="summary-stats">
+                <div class="stat-item">
+                  <span class="stat-label">Vedam Average</span>
+                  <span class="stat-value" id="vedamAverage">-</span>
+                </div>
+                <div class="stat-item highlight">
+                  <span class="stat-label">Current CGPA</span>
+                  <span class="stat-value" id="currentCGPA">-</span>
+                </div>
+              </div>
+
+              <div class="target-input">
+                <label for="targetCGPA">Target CGPA</label>
+                <input
+                  type="number"
+                  id="targetCGPA"
+                  value="7.5"
+                  step="0.1"
+                  min="0"
+                  max="10"
+                  onchange="updateData()"
+                />
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="eligibility-section">
+                <h3>Eligibility Status</h3>
+                <div class="status-row">
+                  <span class="status-label">Innovation Lab</span>
+                  <span id="innovationLabStatus" class="status-badge">-</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Placement</span>
+                  <span id="placementStatus" class="status-badge">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card projection-card">
+            <div class="card-header">
+              <h2>Grade Points</h2>
+            </div>
+            <div class="card-content">
+              <div id="gradePointsContainer" class="grade-points-list"></div>
+            </div>
+          </div>
+        </aside>
+      </main>
     </div>
 
     <script src="js/app.js"></script>
-</body>
+  </body>
 </html>
