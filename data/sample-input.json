@@ -1,0 +1,93 @@
+{
+  "semesters": [
+    {
+      "semesterNumber": 1,
+      "subjects": [
+        {
+          "courseCode": "E0005A",
+          "courseName": "Mathematics for AI - I",
+          "credits": 4,
+          "subjectType": "contest-based",
+          "contests": [
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true}
+          ],
+          "mockInterview": {"marks": null, "pending": true},
+          "vedamTotal": null,
+          "adypuMapping": {
+            "component": "CA",
+            "maxMarks": 30,
+            "formula": "(vedamTotal / 100) * 30"
+          }
+        },
+        {
+          "courseCode": "E0018A",
+          "courseName": "General Physics",
+          "credits": 3,
+          "subjectType": "theory-only",
+          "utMarks": {"marks": null, "pending": true},
+          "etMarks": {"marks": null, "pending": true},
+          "vedamTotal": null
+        },
+        {
+          "courseCode": "E0025A",
+          "courseName": "Fundamentals of Programming - Java",
+          "credits": 3,
+          "subjectType": "contest-based",
+          "contests": [
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true}
+          ],
+          "mockInterview": {"marks": null, "pending": true},
+          "vedamTotal": null,
+          "adypuMapping": null
+        },
+        {
+          "courseCode": "E0025B",
+          "courseName": "Java Lab",
+          "credits": 1,
+          "subjectType": "contest-based",
+          "contests": [
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true},
+            {"marks": null, "pending": true}
+          ],
+          "mockInterview": {"marks": null, "pending": true},
+          "vedamTotal": null,
+          "adypuMapping": {
+            "component": "Lab",
+            "maxMarks": 50,
+            "formula": "(vedamTotal / 100) * 50"
+          }
+        },
+        {
+          "courseCode": "E0028B",
+          "courseName": "Professional Communication",
+          "credits": 2,
+          "subjectType": "professional-communication",
+          "linkedinProfile": {"marks": null, "pending": true},
+          "cvEmail": {"marks": null, "pending": true},
+          "presentation": {"marks": null, "pending": true},
+          "attendance": {"marks": null, "pending": true},
+          "vedamTotal": null
+        },
+        {
+          "courseCode": "E0035B",
+          "courseName": "Co-curricular Activities - I",
+          "credits": 2,
+          "subjectType": "co-curricular",
+          "assignment": {"marks": null, "pending": true},
+          "caseStudy": {"marks": null, "pending": true},
+          "presentation": {"marks": null, "pending": true},
+          "attendance": {"marks": null, "pending": true},
+          "vedamTotal": null
+        }
+      ]
+    }
+  ],
+  "targetCGPA": 7.5,
+  "currentCGPA": null
+}
