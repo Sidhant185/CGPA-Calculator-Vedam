@@ -95,6 +95,33 @@ function setupEventListeners() {
   });
   document.getElementById("importFile").addEventListener("change", importData);
   document.getElementById("resetBtn").addEventListener("click", resetAllData);
+
+  // Add validation to all number inputs
+  document.querySelectorAll('input[type="number"]').forEach((input) => {
+    input.onkeydown = validateNumberInput;
+    // Add onchange validation to clamp values visually
+    input.addEventListener("change", function () {
+      if (this.value !== "" && this.hasAttribute("max")) {
+        const max = parseFloat(this.getAttribute("max"));
+        if (parseFloat(this.value) > max) {
+          this.value = max;
+          updateData(); // Trigger update with clamped value
+        }
+      }
+    });
+  });
+
+  // Add keyboard accessibility to cards
+  document.querySelectorAll(".card-header").forEach((header) => {
+    header.setAttribute("role", "button");
+    header.setAttribute("tabindex", "0");
+    header.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        header.click();
+      }
+    });
+  });
 }
 
 // Toggle Card
@@ -148,26 +175,52 @@ function renderContests() {
     appData.subjects[subject].vedam.contests.forEach((contest, index) => {
       const contestDiv = document.createElement("div");
       contestDiv.className = "contest-item";
-      contestDiv.innerHTML = `
-                <div class="input-row" style="flex: 1;">
-                    <input type="number" class="contest-input" min="0" step="0.1" 
-                        value="${contest.marks !== null ? contest.marks : ""}" 
-                        onchange="updateContest('${subject}', ${index}, 'marks', this.value)"
-                        placeholder="Marks">
-                    <span class="contest-sep">/</span>
-                    <input type="number" class="contest-input" min="0" step="0.1" 
-                        value="${contest.total !== null ? contest.total : ""}" 
-                        onchange="updateContest('${subject}', ${index}, 'total', this.value)"
-                        placeholder="Total">
-                </div>
-                ${
-                  appData.subjects[subject].vedam.contests.length > 1
-                    ? `<button class="btn btn-icon" onclick="removeContest('${subject}', ${index})" title="Remove">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>`
-                    : ""
-                }
-            `;
+
+      const inputRow = document.createElement("div");
+      inputRow.className = "input-row";
+      inputRow.style.flex = "1";
+
+      const marksInput = document.createElement("input");
+      marksInput.type = "number";
+      marksInput.className = "contest-input";
+      marksInput.min = "0";
+      marksInput.step = "0.1";
+      marksInput.placeholder = "Marks";
+      marksInput.value = contest.marks !== null ? contest.marks : "";
+      marksInput.onchange = (e) =>
+        updateContest(subject, index, "marks", e.target.value);
+      marksInput.onkeydown = validateNumberInput;
+
+      const sepSpan = document.createElement("span");
+      sepSpan.className = "contest-sep";
+      sepSpan.textContent = "/";
+
+      const totalInput = document.createElement("input");
+      totalInput.type = "number";
+      totalInput.className = "contest-input";
+      totalInput.min = "0";
+      totalInput.step = "0.1";
+      totalInput.placeholder = "Total";
+      totalInput.value = contest.total !== null ? contest.total : "";
+      totalInput.onchange = (e) =>
+        updateContest(subject, index, "total", e.target.value);
+      totalInput.onkeydown = validateNumberInput;
+
+      inputRow.appendChild(marksInput);
+      inputRow.appendChild(sepSpan);
+      inputRow.appendChild(totalInput);
+      contestDiv.appendChild(inputRow);
+
+      if (appData.subjects[subject].vedam.contests.length > 1) {
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "btn btn-icon";
+        removeBtn.title = "Remove";
+        removeBtn.innerHTML =
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        removeBtn.onclick = () => removeContest(subject, index);
+        contestDiv.appendChild(removeBtn);
+      }
+
       container.appendChild(contestDiv);
     });
   });
@@ -196,12 +249,12 @@ window.removeContest = function (subject, index) {
 
 // Update contest
 window.updateContest = function (subject, index, field, value) {
+  let numValue = value !== "" ? parseFloat(value) : null;
+
   if (field === "marks") {
-    appData.subjects[subject].vedam.contests[index].marks =
-      value !== "" ? parseFloat(value) : null;
+    appData.subjects[subject].vedam.contests[index].marks = numValue;
   } else if (field === "total") {
-    appData.subjects[subject].vedam.contests[index].total =
-      value !== "" ? parseFloat(value) : null;
+    appData.subjects[subject].vedam.contests[index].total = numValue;
   }
   saveData();
   updateData();
@@ -324,69 +377,66 @@ function updateElementText(id, value) {
 
 // Update data from input fields
 function updateDataFromInputs() {
-  // Maths
-  appData.subjects.maths.vedam.mockInterview.marks =
-    getInputValue("maths-mock");
-  appData.subjects.maths.vedam.mockInterview.pending =
-    getCheckboxValue("maths-mock-pending");
-  appData.subjects.maths.adypu.ut.marks = getInputValue("maths-ut");
-  appData.subjects.maths.adypu.ut.pending =
-    getCheckboxValue("maths-ut-pending");
-  appData.subjects.maths.adypu.et.marks = getInputValue("maths-et");
-  appData.subjects.maths.adypu.et.pending =
-    getCheckboxValue("maths-et-pending");
+  const mapping = [
+    // Maths
+    {
+      id: "maths-mock",
+      path: ["subjects", "maths", "vedam", "mockInterview"],
+    },
+    { id: "maths-ut", path: ["subjects", "maths", "adypu", "ut"] },
+    { id: "maths-et", path: ["subjects", "maths", "adypu", "et"] },
+    // Web
+    { id: "web-mock", path: ["subjects", "web", "vedam", "mockInterview"] },
+    { id: "web-ut", path: ["subjects", "web", "adypu", "ut"] },
+    { id: "web-et", path: ["subjects", "web", "adypu", "et"] },
+    // Java
+    { id: "java-mock", path: ["subjects", "java", "vedam", "mockInterview"] },
+    { id: "java-ut", path: ["subjects", "java", "adypu", "ut"] },
+    { id: "java-et", path: ["subjects", "java", "adypu", "et"] },
+    // Prof Comm
+    {
+      id: "prof-linkedin",
+      path: [
+        "subjects",
+        "professionalCommunication",
+        "vedam",
+        "linkedinProfile",
+      ],
+    },
+    {
+      id: "prof-assignment",
+      path: ["subjects", "professionalCommunication", "vedam", "assignment"],
+    },
+    {
+      id: "prof-cv",
+      path: ["subjects", "professionalCommunication", "vedam", "cvEmail"],
+    },
+    {
+      id: "prof-presentation",
+      path: ["subjects", "professionalCommunication", "vedam", "presentation"],
+    },
+    {
+      id: "prof-attendance",
+      path: ["subjects", "professionalCommunication", "vedam", "attendance"],
+    },
+    {
+      id: "prof-casestudy",
+      path: ["subjects", "professionalCommunication", "vedam", "caseStudy"],
+    },
+    // Physics
+    { id: "physics-ut", path: ["subjects", "physics", "adypu", "ut"] },
+    { id: "physics-et", path: ["subjects", "physics", "adypu", "et"] },
+  ];
 
-  // Web
-  appData.subjects.web.vedam.mockInterview.marks = getInputValue("web-mock");
-  appData.subjects.web.vedam.mockInterview.pending =
-    getCheckboxValue("web-mock-pending");
-  appData.subjects.web.adypu.ut.marks = getInputValue("web-ut");
-  appData.subjects.web.adypu.ut.pending = getCheckboxValue("web-ut-pending");
-  appData.subjects.web.adypu.et.marks = getInputValue("web-et");
-  appData.subjects.web.adypu.et.pending = getCheckboxValue("web-et-pending");
-
-  // Java
-  appData.subjects.java.vedam.mockInterview.marks = getInputValue("java-mock");
-  appData.subjects.java.vedam.mockInterview.pending =
-    getCheckboxValue("java-mock-pending");
-  appData.subjects.java.adypu.ut.marks = getInputValue("java-ut");
-  appData.subjects.java.adypu.ut.pending = getCheckboxValue("java-ut-pending");
-  appData.subjects.java.adypu.et.marks = getInputValue("java-et");
-  appData.subjects.java.adypu.et.pending = getCheckboxValue("java-et-pending");
-
-  // Professional Communication
-  appData.subjects.professionalCommunication.vedam.linkedinProfile.marks =
-    getInputValue("prof-linkedin");
-  appData.subjects.professionalCommunication.vedam.linkedinProfile.pending =
-    getCheckboxValue("prof-linkedin-pending");
-  appData.subjects.professionalCommunication.vedam.assignment.marks =
-    getInputValue("prof-assignment");
-  appData.subjects.professionalCommunication.vedam.assignment.pending =
-    getCheckboxValue("prof-assignment-pending");
-  appData.subjects.professionalCommunication.vedam.cvEmail.marks =
-    getInputValue("prof-cv");
-  appData.subjects.professionalCommunication.vedam.cvEmail.pending =
-    getCheckboxValue("prof-cv-pending");
-  appData.subjects.professionalCommunication.vedam.presentation.marks =
-    getInputValue("prof-presentation");
-  appData.subjects.professionalCommunication.vedam.presentation.pending =
-    getCheckboxValue("prof-presentation-pending");
-  appData.subjects.professionalCommunication.vedam.attendance.marks =
-    getInputValue("prof-attendance");
-  appData.subjects.professionalCommunication.vedam.attendance.pending =
-    getCheckboxValue("prof-attendance-pending");
-  appData.subjects.professionalCommunication.vedam.caseStudy.marks =
-    getInputValue("prof-casestudy");
-  appData.subjects.professionalCommunication.vedam.caseStudy.pending =
-    getCheckboxValue("prof-casestudy-pending");
-
-  // Physics
-  appData.subjects.physics.adypu.ut.marks = getInputValue("physics-ut");
-  appData.subjects.physics.adypu.ut.pending =
-    getCheckboxValue("physics-ut-pending");
-  appData.subjects.physics.adypu.et.marks = getInputValue("physics-et");
-  appData.subjects.physics.adypu.et.pending =
-    getCheckboxValue("physics-et-pending");
+  mapping.forEach((item) => {
+    let obj = appData;
+    for (let i = 0; i < item.path.length; i++) {
+      obj = obj[item.path[i]];
+    }
+    // Now obj is the target object (e.g., mockInterview)
+    obj.marks = getInputValue(item.id);
+    obj.pending = getCheckboxValue(item.id + "-pending");
+  });
 
   // Target CGPA
   appData.targetCGPA =
@@ -398,7 +448,21 @@ function updateDataFromInputs() {
 
 function getInputValue(id) {
   const el = document.getElementById(id);
-  return el && el.value !== "" ? parseFloat(el.value) : null;
+  if (!el || el.value === "") return null;
+  const val = parseFloat(el.value);
+  // Clamp value if max attribute exists
+  if (el.hasAttribute("max")) {
+    const max = parseFloat(el.getAttribute("max"));
+    if (val > max) return max;
+  }
+  return val;
+}
+
+// Validate number input to prevent invalid characters like 'e'
+function validateNumberInput(e) {
+  if (["e", "E", "+", "-"].includes(e.key)) {
+    e.preventDefault();
+  }
 }
 
 function getCheckboxValue(id) {
@@ -887,6 +951,15 @@ function exportData() {
 function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
+
+  if (
+    !confirm(
+      "Importing will overwrite your current data. Are you sure you want to continue?"
+    )
+  ) {
+    event.target.value = ""; // Reset input
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = function (e) {
