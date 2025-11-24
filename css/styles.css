@@ -166,7 +166,7 @@ header h1 {
 
 .contest-item {
     display: grid;
-    grid-template-columns: 80px 1fr 50px 1fr auto;
+    grid-template-columns: 80px minmax(120px, 1fr) 50px minmax(120px, 1fr) auto;
     gap: 12px;
     align-items: center;
     margin-bottom: 12px;
@@ -182,10 +182,22 @@ header h1 {
     border-color: #667eea;
 }
 
+.contest-item .btn-danger {
+    white-space: nowrap;
+    min-width: 70px;
+    max-width: 80px;
+    padding: 8px 12px;
+    font-size: 12px;
+    height: fit-content;
+    align-self: center;
+    flex-shrink: 0;
+}
+
 .contest-item label {
     font-size: 0.9em;
     font-weight: 600;
     color: #495057;
+    flex-shrink: 0;
 }
 
 .contest-item input[type="number"] {
@@ -194,6 +206,9 @@ header h1 {
     border: 2px solid #dee2e6;
     border-radius: 6px;
     transition: all 0.2s ease;
+    min-width: 120px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .contest-item input[type="number"]:focus {
@@ -440,6 +455,32 @@ select:focus {
     background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
     color: #856404;
     border: 1px solid #ffeaa7;
+}
+
+.required-marks-item {
+    background: linear-gradient(to right, #fff3cd 0%, #ffffff 100%);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 2px 6px rgba(255, 193, 7, 0.1);
+    transition: all 0.2s ease;
+}
+
+.required-marks-item:hover {
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+    transform: translateX(2px);
+}
+
+.required-marks-item strong {
+    color: #495057;
+    font-size: 0.95em;
+}
+
+.required-marks-item div {
+    margin: 4px 0;
+    color: #6c757d;
+    font-size: 0.9em;
 }
 
 @media (max-width: 1024px) {
