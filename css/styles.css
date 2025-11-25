@@ -326,6 +326,7 @@ input[type="number"]:disabled {
   width: 38px;
   min-width: 38px; /* Ensure minimum width */
   justify-content: center;
+  display: flex;
 }
 
 /* Info Rows */
